@@ -1,954 +1,1070 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SectorSync - Gestão de Documentos</title>
-  <!-- Font & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* ---------- RESET & ROOT VARIABLES ---------- */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg-primary: #f4f6fa;
-      --bg-secondary: #ffffff;
-      --bg-sidebar: #1e1f2b;
-      --bg-topbar: rgba(255,255,255,0.75);
-      --text-primary: #1e1f2b;
-      --text-secondary: #5a5e73;
-      --text-light: #a0a3b5;
-      --border-color: #e9ecf2;
-      --shadow: 0 8px 30px rgba(0,0,0,0.05);
-      --shadow-hover: 0 12px 40px rgba(0,0,0,0.12);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      --accent: #6366f1;
-      --accent-light: #eef2ff;
-      --accent-dark: #4f46e5;
-      --pending: #f59e0b;
-      --review: #3b82f6;
-      --approved: #10b981;
-      --rejected: #ef4444;
-    }
-    .dark {
-      --bg-primary: #0f111a;
-      --bg-secondary: #1a1c2b;
-      --bg-sidebar: #0b0d14;
-      --bg-topbar: rgba(26, 28, 43, 0.85);
-      --text-primary: #edf2f7;
-      --text-secondary: #a0aec0;
-      --text-light: #5a5e73;
-      --border-color: #2d3142;
-      --shadow: 0 8px 30px rgba(0,0,0,0.4);
-      --shadow-hover: 0 12px 40px rgba(0,0,0,0.6);
-      --accent-light: #2d2f4a;
-    }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      transition: var(--transition);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-    a { text-decoration: none; color: inherit; }
-    /* ---------- SCROLLBAR ---------- */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--text-light); border-radius: 10px; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SectorSync - Gestão Dinâmica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ---------- SIDEBAR ---------- */
-    .sidebar {
-      width: 260px;
-      background: var(--bg-sidebar);
-      color: #a0a3b5;
-      display: flex;
-      flex-direction: column;
-      padding: 24px 16px;
-      flex-shrink: 0;
-      transition: var(--transition);
-      z-index: 100;
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      overflow-y: auto;
-    }
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 8px 32px 8px;
-      color: #fff;
-      font-weight: 700;
-      font-size: 22px;
-      letter-spacing: -0.5px;
-    }
-    .sidebar-brand i { color: var(--accent); font-size: 28px; }
-    .sidebar-brand span { background: linear-gradient(135deg, #fff 60%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-    .sidebar-nav a {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      transition: var(--transition);
-      font-weight: 500;
-      font-size: 15px;
-      color: #a0a3b5;
-      cursor: pointer;
-    }
-    .sidebar-nav a i { width: 20px; text-align: center; font-size: 18px; }
-    .sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-    .sidebar-nav a.active { background: var(--accent); color: #fff; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
-    .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 12px; font-size: 14px; color: #a0a3b5; }
-    .sidebar-footer .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        :root {
+            --bg-primary: #f0f2f7;
+            --bg-secondary: #ffffff;
+            --bg-sidebar: #16181f;
+            --bg-topbar: rgba(255, 255, 255, 0.8);
+            --text-primary: #1a1d26;
+            --text-secondary: #5a5e73;
+            --text-light: #a0a3b5;
+            --border-color: #e4e7ef;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --accent: #6366f1;
+            --accent-light: #eef2ff;
+            --accent-dark: #4f46e5;
+            --pending: #f59e0b;
+            --review: #3b82f6;
+            --approved: #10b981;
+            --rejected: #ef4444;
+        }
 
-    /* ---------- MAIN CONTENT ---------- */
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-width: 0;
-    }
-    /* TOPBAR */
-    .topbar {
-      background: var(--bg-topbar);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-color);
-      flex-shrink: 0;
-      transition: var(--transition);
-    }
-    .topbar-left { display: flex; align-items: center; gap: 16px; }
-    .topbar-left h2 { font-size: 20px; font-weight: 600; }
-    .topbar-left .mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 22px; cursor: pointer; }
-    .topbar-right { display: flex; align-items: center; gap: 16px; }
-    .topbar-right .search-box {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 30px;
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: var(--transition);
-    }
-    .topbar-right .search-box input {
-      border: none;
-      background: transparent;
-      outline: none;
-      color: var(--text-primary);
-      font-size: 14px;
-      width: 150px;
-    }
-    .topbar-right .search-box input::placeholder { color: var(--text-light); }
-    .theme-toggle {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 18px;
-      color: var(--text-secondary);
-      transition: var(--transition);
-    }
-    .theme-toggle:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .dark {
+            --bg-primary: #0b0d14;
+            --bg-secondary: #141824;
+            --bg-sidebar: #07090f;
+            --bg-topbar: rgba(20, 24, 36, 0.85);
+            --text-primary: #edf2f7;
+            --text-secondary: #94a3b8;
+            --text-light: #4a4e63;
+            --border-color: #262b3d;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.8);
+            --accent-light: #2d2f4a;
+        }
 
-    /* CONTENT PANELS */
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 32px 100px 32px;
-      transition: var(--transition);
-    }
-    .panel { display: none; animation: fadeSlide 0.3s ease; }
-    .panel.active { display: block; }
-    @keyframes fadeSlide {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.4s ease, color 0.4s ease;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
 
-    /* ---------- DASHBOARD CARDS ---------- */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    .stat-card {
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border-color);
-      transition: var(--transition);
-    }
-    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .stat-card .label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-    .stat-card .value { font-size: 28px; font-weight: 700; margin-top: 6px; }
-    .stat-card .badge { font-size: 12px; background: var(--accent-light); color: var(--accent); padding: 2px 12px; border-radius: 20px; font-weight: 600; }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
 
-    .activity-feed {
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      padding: 24px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
-    }
-    .activity-feed h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .feed-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-color);
-    }
-    .feed-item:last-child { border-bottom: none; }
-    .feed-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .feed-item .msg { flex: 1; font-size: 14px; }
-    .feed-item .msg strong { color: var(--text-primary); }
-    .feed-item .time { font-size: 12px; color: var(--text-light); white-space: nowrap; }
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 250px;
+            background: var(--bg-sidebar);
+            color: #8a8fa6;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 12px;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 100;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+        }
 
-    /* ---------- DOCUMENT LIST ---------- */
-    .doc-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .doc-controls .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
-    .doc-controls .filter-group button {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      padding: 6px 16px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .doc-controls .filter-group button.active-filter {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-    .doc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    .doc-card {
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-      cursor: pointer;
-    }
-    .doc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
-    .doc-card .header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
-    .doc-card .header h4 { font-size: 16px; font-weight: 600; }
-    .doc-card .meta { font-size: 13px; color: var(--text-secondary); display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
-    .doc-card .meta i { margin-right: 4px; width: 16px; }
-    .doc-card .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); }
-    .doc-card .sector-tag { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: var(--accent-light); color: var(--accent); }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 32px 12px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -0.5px;
+        }
+        .sidebar-brand i {
+            color: var(--accent);
+            font-size: 28px;
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 16px rgba(99, 102, 241, 0.7));
+            }
+        }
+        .sidebar-brand span {
+            background: linear-gradient(135deg, #fff 60%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    /* Status Pills */
-    .status-pill {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 30px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .status-pill.pending { background: #fef3c7; color: #b45309; }
-    .status-pill.review { background: #dbeafe; color: #1d4ed8; }
-    .status-pill.approved { background: #d1fae5; color: #065f46; }
-    .status-pill.rejected { background: #fee2e2; color: #991b1b; }
-    .dark .status-pill.pending { background: #422b00; color: #fcd34d; }
-    .dark .status-pill.review { background: #1e3a5f; color: #60a5fa; }
-    .dark .status-pill.approved { background: #064e3b; color: #34d399; }
-    .dark .status-pill.rejected { background: #5c1a1a; color: #f87171; }
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 15px;
+            color: #8a8fa6;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar-nav a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) scaleX(0);
+            width: 4px;
+            height: 28px;
+            background: var(--accent);
+            border-radius: 0 4px 4px 0;
+            transition: transform 0.25s ease;
+        }
+        .sidebar-nav a:hover::before,
+        .sidebar-nav a.active::before {
+            transform: translateY(-50%) scaleX(1);
+        }
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        .sidebar-nav a.active {
+            background: rgba(99, 102, 241, 0.15);
+            color: #fff;
+        }
+        .sidebar-nav a i {
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+        .sidebar-nav a:hover i {
+            transform: scale(1.1);
+        }
+        .sidebar-nav a .badge-nav {
+            margin-left: auto;
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
 
-    /* ---------- UPLOAD PANEL ---------- */
-    .upload-zone {
-      background: var(--bg-secondary);
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius);
-      padding: 60px 20px;
-      text-align: center;
-      transition: var(--transition);
-      cursor: pointer;
-      margin-bottom: 24px;
-    }
-    .upload-zone:hover { border-color: var(--accent); background: var(--accent-light); }
-    .upload-zone i { font-size: 48px; color: var(--text-light); margin-bottom: 16px; }
-    .upload-zone h3 { font-size: 18px; font-weight: 600; }
-    .upload-zone p { color: var(--text-secondary); font-size: 14px; }
-    .upload-form { background: var(--bg-secondary); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border-color); }
-    .upload-form .form-group { margin-bottom: 16px; }
-    .upload-form label { font-weight: 500; font-size: 14px; display: block; margin-bottom: 6px; }
-    .upload-form input, .upload-form select {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: 14px;
-      transition: var(--transition);
-    }
-    .upload-form input:focus, .upload-form select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 12px 28px;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      transition: var(--transition);
-      width: 100%;
-    }
-    .btn-primary:hover { background: var(--accent-dark); transform: scale(1.02); }
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #8a8fa6;
+        }
+        .sidebar-footer .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+        .sidebar-footer .avatar:hover {
+            transform: scale(1.05) rotate(-5deg);
+        }
 
-    /* ---------- SECTORS PANEL ---------- */
-    .sector-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-    .sector-card {
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      text-align: center;
-      transition: var(--transition);
-    }
-    .sector-card:hover { transform: scale(1.03); }
-    .sector-card .icon { font-size: 32px; margin-bottom: 8px; }
-    .sector-card h5 { font-weight: 600; }
-    .sector-card .count { font-size: 13px; color: var(--text-secondary); }
+        /* ===== MAIN ===== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
 
-    /* ---------- MODAL ---------- */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-      animation: fadeIn 0.2s ease;
-    }
-    .modal-overlay.open { display: flex; }
-    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-    .modal-box {
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 32px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-    .modal-box .close {
-      float: right;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-    .modal-box .doc-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .modal-box .doc-sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
-    .modal-box .status-select { margin: 16px 0; display: flex; gap: 10px; flex-wrap: wrap; }
-    .modal-box .status-select button {
-      padding: 6px 16px;
-      border-radius: 30px;
-      border: 1px solid var(--border-color);
-      background: transparent;
-      font-weight: 500;
-      font-size: 13px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .modal-box .status-select button:hover { border-color: var(--accent); }
-    .modal-box .comment-section { margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px; }
-    .modal-box .comment-section .comment-list { max-height: 200px; overflow-y: auto; margin-bottom: 16px; }
-    .modal-box .comment-item { padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-    .modal-box .comment-item .author { font-weight: 600; font-size: 13px; }
-    .modal-box .comment-item .time { color: var(--text-light); font-size: 11px; margin-left: 8px; }
-    .modal-box .comment-item .text { margin-top: 4px; color: var(--text-secondary); }
-    .modal-box .comment-input { display: flex; gap: 10px; }
-    .modal-box .comment-input input {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 30px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-    .modal-box .comment-input input:focus { outline: none; border-color: var(--accent); }
-    .modal-box .comment-input button {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 0 20px;
-      border-radius: 30px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+        .topbar {
+            background: var(--bg-topbar);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar-left h2 {
+            font-size: 20px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .topbar-left .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .topbar-left .mobile-toggle:hover {
+            background: var(--border-color);
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .topbar-right .search-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .topbar-right .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+        .topbar-right .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 160px;
+            transition: width 0.3s;
+        }
+        .topbar-right .search-box input:focus {
+            width: 220px;
+        }
+        .topbar-right .search-box input::placeholder {
+            color: var(--text-light);
+        }
 
-    /* ---------- TOAST ---------- */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      padding: 14px 28px;
-      border-radius: 50px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      border: 1px solid var(--border-color);
-      font-weight: 500;
-      z-index: 2000;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      pointer-events: none;
-      font-size: 14px;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); }
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: rotate(20deg) scale(1.05);
+        }
 
-    /* ---------- RESPONSIVE ---------- */
-    @media (max-width: 768px) {
-      .sidebar {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
-        padding: 0 12px;
-        align-items: center;
-        justify-content: space-between;
-        border-top: 1px solid rgba(255,255,255,0.08);
-        background: var(--bg-sidebar);
-        z-index: 200;
-        overflow: visible;
-      }
-      .sidebar-brand { display: none; }
-      .sidebar-footer { display: none; }
-      .sidebar-nav { flex-direction: row; justify-content: space-around; width: 100%; gap: 0; }
-      .sidebar-nav a { flex-direction: column; padding: 8px 12px; font-size: 10px; gap: 2px; border-radius: 8px; }
-      .sidebar-nav a i { font-size: 20px; }
-      .sidebar-nav a span { display: none; }
-      .sidebar-nav a.active { background: transparent; color: var(--accent); box-shadow: none; }
-      
-      .main-content { margin-bottom: 70px; }
-      .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
-      .topbar-left .mobile-toggle { display: block; }
-      .topbar-left h2 { font-size: 18px; }
-      .topbar-right .search-box input { width: 100px; }
-      .content-area { padding: 16px 16px 90px 16px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .doc-grid { grid-template-columns: 1fr; }
-      .modal-box { padding: 20px; margin: 10px; }
-      .sector-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .topbar-right .search-box { display: none; }
-    }
-  </style>
-</head>
-<body>
-  <!-- ====== SIDEBAR ====== -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <i class="fas fa-cubes"></i>
-      <span>SectorSync</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a class="active" data-panel="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
-      <a data-panel="documents"><i class="fas fa-folder-open"></i><span>Documentos</span></a>
-      <a data-panel="upload"><i class="fas fa-cloud-upload-alt"></i><span>Enviar</span></a>
-      <a data-panel="sectors"><i class="fas fa-users"></i><span>Setores</span></a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="avatar">JD</div>
-      <div><strong>João Silva</strong><br><span style="font-size:12px;">Admin</span></div>
-    </div>
-  </aside>
+        .notification-bell {
+            position: relative;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        .notification-bell:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        .notification-bell .dot-notify {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid var(--bg-secondary);
+            animation: blink 1.2s infinite;
+        }
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
 
-  <!-- ====== MAIN ====== -->
-  <div class="main-content">
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></button>
-        <h2 id="panelTitle">Dashboard</h2>
-      </div>
-      <div class="topbar-right">
-        <div class="search-box">
-          <i class="fas fa-search" style="color:var(--text-light);"></i>
-          <input type="text" id="searchInput" placeholder="Buscar docs...">
-        </div>
-        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
-      </div>
-    </header>
+        /* ===== CONTENT AREA ===== */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 32px 100px 32px;
+            transition: var(--transition);
+        }
+        .panel {
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .panel.active {
+            display: block;
+        }
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-    <!-- CONTENT -->
-    <div class="content-area">
-      <!-- DASHBOARD -->
-      <section id="panel-dashboard" class="panel active">
-        <div class="stats-grid" id="statsGrid"></div>
-        <div class="activity-feed">
-          <h3><i class="fas fa-clock" style="color:var(--accent);"></i> Atividades Recentes</h3>
-          <div id="feedList"></div>
-        </div>
-      </section>
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
+        .stat-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-hover);
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-card .value {
+            font-size: 30px;
+            font-weight: 700;
+            margin-top: 6px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: 0.3s;
+        }
+        .stat-card .badge {
+            font-size: 12px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
 
-      <!-- DOCUMENTS -->
-      <section id="panel-documents" class="panel">
-        <div class="doc-controls">
-          <div class="filter-group" id="filterGroup">
-            <button class="active-filter" data-filter="all">Todos</button>
-            <button data-filter="Financeiro">Financeiro</button>
-            <button data-filter="Jurídico">Jurídico</button>
-            <button data-filter="RH">RH</button>
-            <button data-filter="Operações">Operações</button>
-            <button data-filter="Marketing">Marketing</button>
-          </div>
-        </div>
-        <div class="doc-grid" id="docGrid"></div>
-      </section>
+        .activity-feed {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .activity-feed h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+        .feed-item:hover {
+            background: var(--bg-primary);
+        }
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+        .feed-item .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+        .feed-item:hover .dot {
+            transform: scale(1.3);
+        }
+        .feed-item .msg {
+            flex: 1;
+            font-size: 14px;
+        }
+        .feed-item .msg strong {
+            color: var(--text-primary);
+        }
+        .feed-item .time {
+            font-size: 12px;
+            color: var(--text-light);
+            white-space: nowrap;
+            font-weight: 500;
+        }
 
-      <!-- UPLOAD -->
-      <section id="panel-upload" class="panel">
-        <div class="upload-zone" id="uploadZone">
-          <i class="fas fa-file-upload"></i>
-          <h3>Arraste arquivos aqui</h3>
-          <p>Ou clique para selecionar (simulação)</p>
-        </div>
-        <div class="upload-form">
-          <div class="form-group">
-            <label>Título do Documento</label>
-            <input type="text" id="docTitle" placeholder="Ex: Contrato 2026" value="Relatório Q3">
-          </div>
-          <div class="form-group">
-            <label>Setor Responsável</label>
-            <select id="docSector">
-              <option>Financeiro</option>
-              <option>Jurídico</option>
-              <option>RH</option>
-              <option>Operações</option>
-              <option>Marketing</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Status Inicial</label>
-            <select id="docStatus">
-              <option value="Pendente">Pendente</option>
-              <option value="Revisão">Em Revisão</option>
-              <option value="Aprovado">Aprovado</option>
-              <option value="Rejeitado">Rejeitado</option>
-            </select>
-          </div>
-          <button class="btn-primary" id="uploadBtn"><i class="fas fa-plus-circle"></i> Simular Envio</button>
-        </div>
-      </section>
+        /* ===== DOCUMENTS ===== */
+        .doc-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .doc-controls .filter-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .doc-controls .filter-group button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .doc-controls .filter-group button .count-filter {
+            background: var(--border-color);
+            padding: 0 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 4px;
+            transition: 0.3s;
+        }
+        .doc-controls .filter-group button.active-filter {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: scale(1.02);
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+        }
+        .doc-controls .filter-group button.active-filter .count-filter {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .doc-controls .filter-group button:hover:not(.active-filter) {
+            background: var(--bg-primary);
+            transform: translateY(-2px);
+        }
 
-      <!-- SECTORS -->
-      <section id="panel-sectors" class="panel">
-        <div class="sector-grid" id="sectorGrid"></div>
-      </section>
-    </div>
-  </div>
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .doc-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .doc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #a78bfa);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .doc-card:hover::before {
+            opacity: 1;
+        }
+        .doc-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+        .doc-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+        .doc-card .header h4 {
+            font-size: 16px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .doc-card:hover .header h4 {
+            color: var(--accent);
+        }
+        .doc-card .meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        .doc-card .meta i {
+            margin-right: 4px;
+            width: 16px;
+        }
+        .doc-card .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        .doc-card .sector-tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: var(--accent-light);
+            color: var(--accent);
+            transition: 0.3s;
+        }
+        .doc-card:hover .sector-tag {
+            background: var(--accent);
+            color: #fff;
+        }
+        .doc-card .drag-handle {
+            color: var(--text-light);
+            cursor: grab;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+        .doc-card .drag-handle:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .doc-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .doc-card.drag-over {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: scale(1.02);
+        }
 
-  <!-- ====== MODAL ====== -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-box" id="modalBox">
-      <button class="close" id="modalClose"><i class="fas fa-times"></i></button>
-      <div id="modalContent">
-        <h2 class="doc-title" id="modalTitle">Título</h2>
-        <div class="doc-sub" id="modalSub">Setor: Financeiro • Criado por: João</div>
-        <div class="status-select" id="statusSelect">
-          <button data-status="Pendente">Pendente</button>
-          <button data-status="Revisão">Revisão</button>
-          <button data-status="Aprovado">Aprovado</button>
-          <button data-status="Rejeitado">Rejeitado</button>
-        </div>
-        <div class="comment-section">
-          <h4 style="margin-bottom:8px;"><i class="fas fa-comment-dots" style="color:var(--accent);"></i> Comentários</h4>
-          <div class="comment-list" id="commentList"></div>
-          <div class="comment-input">
-            <input type="text" id="commentInput" placeholder="Ex: [Financeiro] Preciso da assinatura...">
-            <button id="commentSend"><i class="fas fa-paper-plane"></i></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        .status-pill {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            transition: all 0.3s;
+        }
+        .status-pill.pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .status-pill.review {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .status-pill.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-pill.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .dark .status-pill.pending {
+            background: #422b00;
+            color: #fcd34d;
+        }
+        .dark .status-pill.review {
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+        .dark .status-pill.approved {
+            background: #064e3b;
+            color: #34d399;
+        }
+        .dark .status-pill.rejected {
+            background: #5c1a1a;
+            color: #f87171;
+        }
 
-  <!-- ====== TOAST ====== -->
-  <div class="toast" id="toast"></div>
+        /* ===== UPLOAD ===== */
+        .upload-zone {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius);
+            padding: 50px 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
+        .upload-zone:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: scale(1.01);
+        }
+        .upload-zone.dragover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: scale(1.02);
+        }
+        .upload-zone i {
+            font-size: 52px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            transition: all 0.4s;
+        }
+        .upload-zone:hover i {
+            color: var(--accent);
+            transform: translateY(-6px) scale(1.1);
+        }
+        .upload-zone h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .upload-zone p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
 
-  <script>
-    // ============================================================
-    //  DATA
-    // ============================================================
-    let documents = [
-      { id: 1, title: 'Contrato Fornecedor A', author: 'Carlos', sector: 'Jurídico', status: 'Revisão', date: '2026-07-08 14:30', comments: [{ author: 'Jurídico', text: 'Revisar cláusula 4.', time: '14:35' }] },
-      { id: 2, title: 'Relatório Financeiro Q2', author: 'Mariana', sector: 'Financeiro', status: 'Pendente', date: '2026-07-07 09:15', comments: [{ author: 'Financeiro', text: 'Aguardando dados de custos.', time: '10:00' }] },
-      { id: 3, title: 'Manual de Integração', author: 'Ana', sector: 'RH', status: 'Aprovado', date: '2026-07-06 16:45', comments: [] },
-      { id: 4, title: 'Projeto Marketing Digital', author: 'Pedro', sector: 'Marketing', status: 'Rejeitado', date: '2026-07-05 11:20', comments: [{ author: 'Financeiro', text: 'Orçamento excedente.', time: '12:00' }, { author: 'Marketing', text: 'Vamos revisar escopo.', time: '12:30' }] },
-      { id: 5, title: 'Checklist Operacional', author: 'Lucas', sector: 'Operações', status: 'Revisão', date: '2026-07-09 08:00', comments: [{ author: 'Operações', text: 'Validar equipamentos.', time: '08:15' }] },
-    ];
-    let currentId = 6;
-    let currentFilter = 'all';
-    let currentDocId = null;
+        .upload-form {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .upload-form .form-group {
+            margin-bottom: 18px;
+        }
+        .upload-form label {
+            font-weight: 500;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .upload-form input,
+        .upload-form select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .upload-form input:focus,
+        .upload-form select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            transform: scale(1.01);
+        }
 
-    // DOM refs
-    const $ = s => document.querySelector(s);
-    const $$ = s => document.querySelectorAll(s);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .btn-primary:hover::after {
+            opacity: 1;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.35);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
 
-    const panels = {
-      dashboard: $('#panel-dashboard'),
-      documents: $('#panel-documents'),
-      upload: $('#panel-upload'),
-      sectors: $('#panel-sectors'),
-    };
-    const navLinks = $$('.sidebar-nav a');
-    const docGrid = $('#docGrid');
-    const statsGrid = $('#statsGrid');
-    const feedList = $('#feedList');
-    const sectorGrid = $('#sectorGrid');
-    const modalOverlay = $('#modalOverlay');
-    const modalTitle = $('#modalTitle');
-    const modalSub = $('#modalSub');
-    const commentList = $('#commentList');
-    const commentInput = $('#commentInput');
-    const commentSend = $('#commentSend');
-    const modalClose = $('#modalClose');
-    const statusSelect = $('#statusSelect');
-    const searchInput = $('#searchInput');
-    const filterGroup = $('#filterGroup');
-    const themeToggle = $('#themeToggle');
-    const toast = $('#toast');
-    let toastTimeout;
+        /* ===== SECTORS ===== */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 18px;
+        }
+        .sector-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+        }
+        .sector-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+        .sector-card .icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            transition: transform 0.4s;
+        }
+        .sector-card:hover .icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+        .sector-card h5 {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .sector-card .count {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .sector-card .progress-bar {
+            margin-top: 10px;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .sector-card .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #a78bfa);
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
 
-    // ============================================================
-    //  RENDER FUNCTIONS
-    // ============================================================
-    function getStatusPill(status) {
-      const map = { 'Pendente':'pending', 'Revisão':'review', 'Aprovado':'approved', 'Rejeitado':'rejected' };
-      return `<span class="status-pill ${map[status] || 'pending'}">${status}</span>`;
-    }
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
 
-    function renderStats() {
-      const total = documents.length;
-      const pendente = documents.filter(d => d.status === 'Pendente').length;
-      const revisao = documents.filter(d => d.status === 'Revisão').length;
-      const aprovado = documents.filter(d => d.status === 'Aprovado').length;
-      statsGrid.innerHTML = `
-        <div class="stat-card"><div class="label">Total</div><div class="value">${total}</div></div>
-        <div class="stat-card"><div class="label">Pendentes</div><div class="value">${pendente}</div><div class="badge">Atenção</div></div>
-        <div class="stat-card"><div class="label">Em Revisão</div><div class="value">${revisao}</div></div>
-        <div class="stat-card"><div class="label">Aprovados</div><div class="value">${aprovado}</div></div>
-      `;
-    }
+        .modal-box {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.8) translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-box .close {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        .modal-box .close:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
+        .modal-box .doc-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .modal-box .doc-sub {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .modal-box .status-select {
+            margin: 16px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .modal-box .status-select button {
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .modal-box .status-select button:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        .modal-box .status-select button.active-status {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+        .modal-box .comment-section {
+            margin-top: 24px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .modal-box .comment-section .comment-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+        .modal-box .comment-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .modal-box .comment-item:hover {
+            background: var(--bg-primary);
+        }
+        .modal-box .comment-item .author {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--accent);
+        }
+        .modal-box .comment-item .time {
+            color: var(--text-light);
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        .modal-box .comment-item .text {
+            margin-top: 4px;
+            color: var(--text-secondary);
+        }
+        .modal-box .comment-input {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-box .comment-input input {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .modal-box .comment-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        .modal-box .comment-input button {
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: #fff;
+            border: none;
+            padding: 0 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-box .comment-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
 
-    function renderFeed() {
-      const sorted = [...documents].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
-      feedList.innerHTML = sorted.map(d => `
-        <div class="feed-item">
-          <div class="dot" style="background:${d.status === 'Aprovado' ? 'var(--approved)' : d.status === 'Rejeitado' ? 'var(--rejected)' : d.status === 'Revisão' ? 'var(--review)' : 'var(--pending)'}"></div>
-          <div class="msg"><strong>${d.title}</strong> - ${d.status} por ${d.sector}</div>
-          <div class="time">${d.date.split(' ')[0]}</div>
-        </div>
-      `).join('');
-    }
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: 50px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+            z-index: 2000;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast i {
+            color: var(--accent);
+            font-size: 20px;
+        }
 
-    function renderSectors() {
-      const sectors = ['Financeiro','Jurídico','RH','Operações','Marketing'];
-      sectorGrid.innerHTML = sectors.map(s => {
-        const count = documents.filter(d => d.sector === s).length;
-        const icons = { 'Financeiro':'fa-coins', 'Jurídico':'fa-gavel', 'RH':'fa-user-tie', 'Operações':'fa-cogs', 'Marketing':'fa-bullhorn' };
-        return `
-          <div class="sector-card">
-            <div class="icon"><i class="fas ${icons[s] || 'fa-building'}"></i></div>
-            <h5>${s}</h5>
-            <div class="count">${count} documento${count > 1 ? 's' : ''}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderDocuments(filter = currentFilter, search = '') {
-      let filtered = [...documents];
-      if (filter !== 'all') filtered = filtered.filter(d => d.sector === filter);
-      if (search.trim()) {
-        const s = search.toLowerCase().trim();
-        filtered = filtered.filter(d => d.title.toLowerCase().includes(s) || d.sector.toLowerCase().includes(s));
-      }
-      if (filtered.length === 0) {
-        docGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-secondary);">Nenhum documento encontrado.</div>`;
-        return;
-      }
-      docGrid.innerHTML = filtered.map(d => `
-        <div class="doc-card" onclick="openModal(${d.id})">
-          <div class="header">
-            <h4>${d.title}</h4>
-            ${getStatusPill(d.status)}
-          </div>
-          <div class="meta">
-            <span><i class="fas fa-user"></i> ${d.author}</span>
-            <span><i class="fas fa-calendar"></i> ${d.date.split(' ')[0]}</span>
-          </div>
-          <div class="footer">
-            <span class="sector-tag"><i class="fas fa-building"></i> ${d.sector}</span>
-            <span style="font-size:13px;color:var(--text-light);"><i class="fas fa-comment"></i> ${d.comments.length}</span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderAll() {
-      renderStats();
-      renderFeed();
-      renderSectors();
-      renderDocuments();
-    }
-
-    // ============================================================
-    //  MODAL
-    // ============================================================
-    function openModal(id) {
-      const doc = documents.find(d => d.id === id);
-      if (!doc) return;
-      currentDocId = id;
-      modalTitle.textContent = doc.title;
-      modalSub.textContent = `Setor: ${doc.sector} • Criado por: ${doc.author} • ${doc.date}`;
-      // comments
-      renderComments(doc);
-      // highlight status buttons
-      $$('#statusSelect button').forEach(btn => {
-        btn.style.borderColor = btn.dataset.status === doc.status ? 'var(--accent)' : 'var(--border-color)';
-        btn.style.background = btn.dataset.status === doc.status ? 'var(--accent-light)' : 'transparent';
-      });
-      modalOverlay.classList.add('open');
-    }
-
-    function renderComments(doc) {
-      if (!doc) doc = documents.find(d => d.id === currentDocId);
-      if (!doc) return;
-      commentList.innerHTML = doc.comments.length === 0 ? '<p style="color:var(--text-light);font-size:14px;">Nenhum comentário ainda.</p>' :
-        doc.comments.map(c => `
-          <div class="comment-item">
-            <div><span class="author">${c.author}</span><span class="time">${c.time}</span></div>
-            <div class="text">${c.text}</div>
-          </div>
-        `).join('');
-    }
-
-    function addComment(text) {
-      if (!text.trim()) return;
-      const doc = documents.find(d => d.id === currentDocId);
-      if (!doc) return;
-      // Detect sector prefix like "[Financeiro]"
-      let author = 'Usuário';
-      const match = text.match(/^\[(.*?)\]/);
-      if (match) author = match[1];
-      doc.comments.push({ author, text: text.replace(/^\[.*?\]\s*/, ''), time: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) });
-      renderComments(doc);
-      renderDocuments(currentFilter, searchInput.value);
-      renderFeed();
-      showToast('Comentário adicionado!');
-      commentInput.value = '';
-    }
-
-    function changeStatus(newStatus) {
-      const doc = documents.find(d => d.id === currentDocId);
-      if (!doc) return;
-      doc.status = newStatus;
-      renderDocuments(currentFilter, searchInput.value);
-      renderStats();
-      renderFeed();
-      // update modal buttons
-      $$('#statusSelect button').forEach(btn => {
-        btn.style.borderColor = btn.dataset.status === newStatus ? 'var(--accent)' : 'var(--border-color)';
-        btn.style.background = btn.dataset.status === newStatus ? 'var(--accent-light)' : 'transparent';
-      });
-      showToast(`Status alterado para ${newStatus}`);
-    }
-
-    // Close modal
-    function closeModal() {
-      modalOverlay.classList.remove('open');
-    }
-
-    // ============================================================
-    //  TOAST
-    // ============================================================
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
-    }
-
-    // ============================================================
-    //  UPLOAD
-    // ============================================================
-    function uploadDocument() {
-      const title = $('#docTitle').value.trim() || 'Documento sem título';
-      const sector = $('#docSector').value;
-      const status = $('#docStatus').value;
-      const newDoc = {
-        id: currentId++,
-        title,
-        author: 'João Silva',
-        sector,
-        status,
-        date: new Date().toLocaleString('pt-BR'),
-        comments: [{ author: 'Sistema', text: 'Documento criado.', time: 'Agora' }]
-      };
-      documents.push(newDoc);
-      renderAll();
-      showToast(`"${title}" enviado para ${sector}!`);
-      // Reset form
-      $('#docTitle').value = '';
-    }
-
-    // ============================================================
-    //  NAVIGATION
-    // ============================================================
-    function navigate(panelId) {
-      // hide all panels
-      Object.values(panels).forEach(p => p.classList.remove('active'));
-      const target = document.getElementById(`panel-${panelId}`);
-      if (target) target.classList.add('active');
-      // update nav
-      navLinks.forEach(link => {
-        link.classList.toggle('active', link.dataset.panel === panelId);
-      });
-      // update title
-      const titles = { dashboard:'Dashboard', documents:'Documentos', upload:'Enviar Documento', sectors:'Setores' };
-      $('#panelTitle').textContent = titles[panelId] || 'Dashboard';
-      // close mobile sidebar if open
-      if (window.innerWidth <= 768) {
-        // sidebar is always visible at bottom, just reset scroll
-      }
-    }
-
-    // ============================================================
-    //  EVENT LISTENERS
-    // ============================================================
-    // Nav
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const panel = link.dataset.panel;
-        navigate(panel);
-        if (panel === 'documents') renderDocuments(currentFilter, searchInput.value);
-        if (panel === 'dashboard') renderAll();
-      });
-    });
-
-    // Filter
-    filterGroup.addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (!btn || !btn.dataset.filter) return;
-      filterGroup.querySelectorAll('button').forEach(b => b.classList.remove('active-filter'));
-      btn.classList.add('active-filter');
-      currentFilter = btn.dataset.filter;
-      renderDocuments(currentFilter, searchInput.value);
-    });
-
-    // Search
-    searchInput.addEventListener('input', () => {
-      renderDocuments(currentFilter, searchInput.value);
-    });
-
-    // Theme
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      const icon = themeToggle.querySelector('i');
-      icon.classList.toggle('fa-moon');
-      icon.classList.toggle('fa-sun');
-    });
-
-    // Modal close
-    modalClose.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) closeModal();
-    });
-
-    // Status change in modal
-    statusSelect.addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      changeStatus(btn.dataset.status);
-    });
-
-    // Comment send
-    commentSend.addEventListener('click', () => addComment(commentInput.value));
-    commentInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') addComment(commentInput.value);
-    });
-
-    // Upload
-    $('#uploadBtn').addEventListener('click', uploadDocument);
-    $('#uploadZone').addEventListener('click', () => {
-      showToast('Simulação: Clique em "Simular Envio" para adicionar!');
-    });
-
-    // Mobile sidebar toggle (just toggles visibility of bottom nav, but we keep it always visible)
-    $('#mobileToggle').addEventListener('click', () => {
-      // On mobile, sidebar is the bottom nav. We can scroll to top or just focus.
-      document.querySelector('.content-area').scrollTop = 0;
-    });
-
-    // Keyboard shortcut: Escape to close modal
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    // ============================================================
-    //  INIT
-    // ============================================================
-    renderAll();
-
-    // Expose for inline onclick
-    window.openModal = openModal;
-    window.closeModal = closeModal;
-  </script>
-</body>
-</html>
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 68px;
+                flex-direction: row;
+                padding: 0 8px;
+                align-items: center;
+                justify-content: space-between;
+                border-top: 1px solid
