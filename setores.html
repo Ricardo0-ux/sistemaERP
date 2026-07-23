@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setores • Área Restrita</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #f5f7fa 0%, #e9edf5 100%);
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 2.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.05);
+      padding: 2.5rem 2.8rem;
+      width: 100%;
+      max-width: 720px;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h1 small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #64748b;
+    }
+
+    .status-area {
+      background: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      border: 1px solid #e9edf5;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .status-area .setor-ativo {
+      font-weight: 600;
+      color: #0f172a;
+      background: #dbeafe;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+    }
+
+    .status-area .btn-sair {
+      background: #eef2f6;
+      border: none;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #475569;
+      transition: 0.15s;
+    }
+
+    .status-area .btn-sair:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .subtitle {
+      color: #475569;
+      font-size: 0.95rem;
+      border-left: 4px solid #3b82f6;
+      padding-left: 1rem;
+      margin-bottom: 2rem;
+      background: rgba(59, 130, 246, 0.06);
+      border-radius: 0 12px 12px 0;
+      line-height: 1.5;
+    }
+
+    .setores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.2rem;
+      margin: 1.8rem 0 1rem;
+    }
+
+    .setor-card {
+      background: white;
+      padding: 1.5rem 0.8rem;
+      border-radius: 1.8rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      border: 1px solid #eef2f6;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: #1e293b;
+      font-weight: 500;
+    }
+
+    .setor-card:hover:not(.bloqueado) {
+      transform: translateY(-6px);
+      border-color: #3b82f6;
+      box-shadow: 0 16px 28px -8px rgba(0, 0, 0, 0.12);
+      background: #ffffff;
+    }
+
+    .setor-card:active:not(.bloqueado) {
+      transform: scale(0.96);
+    }
+
+    .setor-card .icone {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+
+    .setor-card .nome-setor {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .setor-card .link-info {
+      font-size: 0.7rem;
+      background: #eef2f6;
+      padding: 0.2rem 0.7rem;
+      border-radius: 30px;
+      color: #475569;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .setor-card.bloqueado {
+      opacity: 0.5;
+      filter: grayscale(0.4);
+      pointer-events: none;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+
+    .setor-card.bloqueado .link-info {
+      background: #e9edf5;
+      color: #94a3b8;
+    }
+
+    .setor-card .cadeado {
+      font-size: 0.9rem;
+      margin-left: 0.2rem;
+      opacity: 0.7;
+    }
+
+    .setor-card .badge-liberado {
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.7rem;
+      border-radius: 30px;
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    .mensagem {
+      margin-top: 1.2rem;
+      padding: 0.7rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      display: none;
+      text-align: center;
+    }
+
+    .mensagem.erro {
+      display: block;
+      color: #dc2626;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .mensagem.sucesso {
+      display: block;
+      color: #15803d;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .footer-info {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #64748b;
+      border-top: 1px dashed #d1d9e6;
+      padding-top: 1.5rem;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-info span {
+      background: #f1f5f9;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #334155;
+    }
+
+    @media (max-width: 550px) {
+      .card { padding: 1.8rem 1.2rem; }
+      .header { flex-direction: column; align-items: stretch; }
+      .status-area { justify-content: center; padding: 0.4rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="card" id="app">
+  <div class="header">
+    <h1>
+      🏢 Setores
+      <small>acesso restrito</small>
+    </h1>
+    <div class="status-area" id="statusArea">
+      <span style="font-size: 0.85rem; color: #64748b;">🔓 Liberado:</span>
+      <span class="setor-ativo" id="setorAtivo">Nenhum</span>
+      <button class="btn-sair" id="btnSair">🚪 Sair</button>
+    </div>
+  </div>
+
+  <div class="subtitle">
+    ✅ Apenas o setor correspondente à sua senha está disponível para redirecionamento.
+  </div>
+
+  <div class="setores-grid" id="setoresContainer">
+    <!-- Os setores serão renderizados via JavaScript -->
+  </div>
+
+  <div id="mensagem" class="mensagem"></div>
+
+  <div class="footer-info">
+    <span>🔹 RH: rh123</span>
+    <span>🔹 TI: ti456</span>
+    <span>🔹 Financeiro: fin789</span>
+    <span>🔹 Marketing: mkt101</span>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- CONFIGURAÇÃO DOS SETORES ----------
+    const setores = [
+      { id: 'rh', nome: 'RH', icone: '👥', senha: 'rh123', link: 'https://exemplo.com/rh' },
+      { id: 'ti', nome: 'TI', icone: '💻', senha: 'ti456', link: 'https://exemplo.com/ti' },
+      { id: 'financeiro', nome: 'Financeiro', icone: '💰', senha: 'fin789', link: 'https://exemplo.com/financeiro' },
+      { id: 'marketing', nome: 'Marketing', icone: '📣', senha: 'mkt101', link: 'https://exemplo.com/marketing' }
+    ];
+
+    // Referências
+    const container = document.getElementById('setoresContainer');
+    const setorAtivoEl = document.getElementById('setorAtivo');
+    const btnSair = document.getElementById('btnSair');
+    const mensagemEl = document.getElementById('mensagem');
+
+    // Estado
+    let senhaLiberada = null; // armazena a senha
+    let setorLiberado = null; // armazena o nome do setor
+
+    // ---------- FUNÇÕES ----------
+    function exibirMensagem(texto, isErro = true) {
+      mensagemEl.textContent = texto;
+      mensagemEl.className = 'mensagem';
+      if (isErro) {
+        mensagemEl.classList.add('erro');
+      } else {
+        mensagemEl.classList.add('sucesso');
+      }
+      clearTimeout(window._msgTimeout);
+      window._msgTimeout = setTimeout(() => {
+        mensagemEl.className = 'mensagem';
+        mensagemEl.textContent = '';
+      }, 4000);
+    }
+
+    function renderizarSetores() {
+      container.innerHTML = '';
+
+      setores.forEach(setor => {
+        const estaLiberado = (setor.senha === senhaLiberada);
+        const isBloqueado = !estaLiberado;
+
+        const card = document.createElement('div');
+        card.className = `setor-card ${isBloqueado ? 'bloqueado' : ''}`;
+        card.dataset.setorId = setor.id;
+
+        // Ícone
+        const iconSpan = document.createElement('div');
+        iconSpan.className = 'icone';
+        iconSpan.textContent = setor.icone;
+
+        // Nome
+        const nomeSpan = document.createElement('div');
+        nomeSpan.className = 'nome-setor';
+        nomeSpan.textContent = setor.nome;
+
+        // Link
+        const linkSpan = document.createElement('div');
+        linkSpan.className = 'link-info';
+        linkSpan.textContent = setor.link;
+
+        // Status
+        if (isBloqueado) {
+          const cadeado = document.createElement('span');
+          cadeado.className = 'cadeado';
+          cadeado.textContent = '🔒';
+          nomeSpan.appendChild(cadeado);
+        } else {
+          const badge = document.createElement('div');
+          badge.className = 'badge-liberado';
+          badge.textContent = '✅ Liberado';
+          card.appendChild(badge);
+        }
+
+        card.appendChild(iconSpan);
+        card.appendChild(nomeSpan);
+        card.appendChild(linkSpan);
+
+        // Evento de clique
+        card.addEventListener('click', function() {
+          const id = this.dataset.setorId;
+          const setorEncontrado = setores.find(s => s.id === id);
+          if (!setorEncontrado) return;
+
+          // Verifica se está liberado (comparando senha)
+          if (setorEncontrado.senha !== senhaLiberada) {
+            exibirMensagem(`⛔ Setor "${setorEncontrado.nome}" bloqueado. Faça login novamente.`, true);
+            return;
+          }
+
+          // Redireciona
+          if (setorEncontrado.link) {
+            window.open(setorEncontrado.link, '_blank');
+            exibirMensagem(`✅ Redirecionando para ${setorEncontrado.nome}...`, false);
+          } else {
+            exibirMensagem(`⚠️ Link não configurado para ${setorEncontrado.nome}`, true);
+          }
+        });
+
+        container.appendChild(card);
+      });
+
+      // Atualiza o status
+      if (setorLiberado) {
+        setorAtivoEl.textContent = setorLiberado;
+      } else {
+        setorAtivoEl.textContent = 'Nenhum';
+      }
+    }
+
+    function carregarSessao() {
+      try {
+        senhaLiberada = sessionStorage.getItem('senhaLiberada');
+        setorLiberado = sessionStorage.getItem('setorLiberado');
+
+        if (!senhaLiberada) {
+          // Não está logado: redireciona para login
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Verifica se a senha ainda é válida
+        const setorValido = setores.some(s => s.senha === senhaLiberada);
+        if (!setorValido) {
+          // Senha inválida (não deveria acontecer)
+          sessionStorage.removeItem('senhaLiberada');
+          sessionStorage.removeItem('setorLiberado');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Renderiza com o estado
+        renderizarSetores();
+        exibirMensagem(`🔓 Setor "${setorLiberado}" liberado! Clique no card para acessar.`, false);
+      } catch (e) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    function logout() {
+      try {
+        sessionStorage.removeItem('senhaLiberada');
+        sessionStorage.removeItem('setorLiberado');
+        window.location.href = 'login.html';
+      } catch (e) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    // ---------- EVENTOS ----------
+    btnSair.addEventListener('click', function(e) {
+      e.preventDefault();
+      logout();
+    });
+
+    // ---------- INICIALIZAÇÃO ----------
+    carregarSessao();
+  })();
+</script>
+</body>
+</html>
