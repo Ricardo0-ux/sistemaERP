@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login por Setor • Redirecionamento</title>
+  <title>Login • Acesso por Setor</title>
   <style>
     * {
       margin: 0;
@@ -21,40 +21,31 @@
       padding: 1.5rem;
     }
 
-    /* Cards e containers */
-    .card {
-      background: rgba(255, 255, 255, 0.75);
+    .login-card {
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border-radius: 2.5rem;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.05);
-      padding: 2.5rem 2.8rem;
+      padding: 2.8rem 3rem;
       width: 100%;
-      max-width: 640px;
-      transition: all 0.25s ease;
+      max-width: 460px;
       border: 1px solid rgba(255, 255, 255, 0.4);
+      transition: all 0.25s ease;
     }
 
-    h1 {
-      font-size: 2.1rem;
-      font-weight: 600;
+    .login-card h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
       color: #1e293b;
-      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 0.75rem;
     }
 
-    h1 small {
-      font-size: 0.9rem;
-      font-weight: 400;
+    .login-card .subtitle {
       color: #64748b;
-      margin-left: 0.5rem;
-    }
-
-    .subtitle {
-      color: #475569;
       font-size: 0.95rem;
       border-left: 4px solid #3b82f6;
       padding-left: 1rem;
@@ -64,36 +55,27 @@
       line-height: 1.5;
     }
 
-    /* Login */
-    .login-area {
-      background: white;
-      border-radius: 1.8rem;
-      padding: 1.8rem 1.8rem 2rem;
-      box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 8px 18px rgba(0, 0, 0, 0.04);
-      margin-bottom: 2.5rem;
-      border: 1px solid #e9edf5;
+    .login-card .logo-icon {
+      font-size: 2.8rem;
+      margin-right: 0.2rem;
     }
 
-    .login-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.8rem;
+    .form-group {
+      margin-bottom: 1.5rem;
     }
 
-    .login-row label {
-      font-weight: 500;
+    .form-group label {
+      display: block;
+      font-weight: 600;
       color: #1e293b;
+      margin-bottom: 0.4rem;
       font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
     }
 
-    .login-row input {
-      flex: 1 1 180px;
-      padding: 0.8rem 1.2rem;
-      border: 1px solid #d1d9e6;
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border: 2px solid #d1d9e6;
       border-radius: 40px;
       font-size: 1rem;
       background: #f8fafc;
@@ -102,434 +84,217 @@
       color: #0f172a;
     }
 
-    .login-row input:focus {
+    .form-group input:focus {
       border-color: #3b82f6;
       background: white;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
     }
 
-    .login-row button {
+    .btn-login {
+      width: 100%;
       background: #1e293b;
       border: none;
       color: white;
-      padding: 0.8rem 2rem;
+      padding: 0.9rem;
       border-radius: 40px;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 1.05rem;
       cursor: pointer;
       transition: 0.2s;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      letter-spacing: 0.3px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      letter-spacing: 0.5px;
+      margin-top: 0.5rem;
     }
 
-    .login-row button:hover {
+    .btn-login:hover {
       background: #0f172a;
-      transform: scale(0.97);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+      transform: scale(0.98);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     }
 
-    .login-row button:active {
-      transform: scale(0.95);
+    .btn-login:active {
+      transform: scale(0.96);
     }
 
     .mensagem {
-      margin-top: 0.9rem;
+      margin-top: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 30px;
       font-size: 0.9rem;
+      display: none;
+      text-align: center;
+    }
+
+    .mensagem.erro {
+      display: block;
       color: #dc2626;
       background: #fef2f2;
-      padding: 0.5rem 1rem;
-      border-radius: 30px;
-      display: inline-block;
       border: 1px solid #fecaca;
     }
 
     .mensagem.sucesso {
+      display: block;
       color: #15803d;
       background: #f0fdf4;
-      border-color: #bbf7d0;
+      border: 1px solid #bbf7d0;
     }
 
-    /* Setores */
-    .setores-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1.2rem;
-      margin: 1.8rem 0 0.8rem;
-    }
-
-    .setor-card {
-      background: white;
-      padding: 1.5rem 0.8rem;
-      border-radius: 1.8rem;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-      border: 1px solid #eef2f6;
-      transition: all 0.2s;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.4rem;
-      text-decoration: none;
-      color: #1e293b;
-      font-weight: 500;
-      backdrop-filter: blur(2px);
-    }
-
-    .setor-card:hover {
-      transform: translateY(-6px);
-      border-color: #94a3b8;
-      box-shadow: 0 16px 28px -8px rgba(0, 0, 0, 0.12);
-      background: #ffffff;
-    }
-
-    .setor-card:active {
-      transform: scale(0.96);
-    }
-
-    .setor-card .icone {
-      font-size: 2.2rem;
-      line-height: 1;
-    }
-
-    .setor-card .nome-setor {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #0f172a;
-    }
-
-    .setor-card .link-info {
-      font-size: 0.7rem;
-      background: #eef2f6;
-      padding: 0.2rem 0.7rem;
-      border-radius: 30px;
-      color: #475569;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .setor-card.bloqueado {
-      opacity: 0.5;
-      filter: grayscale(0.4);
-      pointer-events: none;
-      cursor: not-allowed;
-      border-color: #e2e8f0;
-    }
-
-    .setor-card.bloqueado .link-info {
-      background: #e9edf5;
-      color: #94a3b8;
-    }
-
-    .setor-card .cadeado {
-      font-size: 0.9rem;
-      margin-left: 0.2rem;
-      opacity: 0.7;
-    }
-
-    .footer-note {
-      margin-top: 2rem;
-      font-size: 0.8rem;
-      color: #64748b;
-      border-top: 1px dashed #d1d9e6;
+    .senhas-rapidas {
+      margin-top: 1.8rem;
       padding-top: 1.5rem;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      gap: 1.2rem;
-      flex-wrap: wrap;
+      border-top: 1px dashed #d1d9e6;
     }
 
-    .footer-note span {
+    .senhas-rapidas p {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+
+    .senhas-rapidas .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .senhas-rapidas .badge {
       background: #f1f5f9;
-      padding: 0.2rem 1rem;
+      padding: 0.3rem 0.9rem;
       border-radius: 30px;
       font-family: monospace;
       font-size: 0.8rem;
       color: #334155;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: 0.15s;
     }
 
-    .badge-senha {
+    .senhas-rapidas .badge:hover {
       background: #dbeafe;
-      padding: 0.15rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: #1e4b8a;
+      border-color: #3b82f6;
+      transform: scale(1.02);
+    }
+
+    .senhas-rapidas .badge .setor-label {
+      font-weight: 600;
+      color: #1e293b;
+      margin-right: 0.3rem;
     }
 
     @media (max-width: 500px) {
-      .card { padding: 1.8rem 1.2rem; }
-      .login-row { flex-direction: column; align-items: stretch; }
-      .login-row button { justify-content: center; }
+      .login-card { padding: 2rem 1.5rem; }
     }
   </style>
 </head>
 <body>
-<div class="card" id="app">
+<div class="login-card">
   <h1>
-    🏢 Setores
-    <small>acesso por senha</small>
+    <span class="logo-icon">🔐</span> Login
   </h1>
   <div class="subtitle">
-    🔑 Insira a senha correspondente ao setor desejado e clique em "Liberar acesso"
+    Digite a senha do setor para acessar a área restrita
   </div>
 
-  <!-- ÁREA DE LOGIN -->
-  <div class="login-area">
-    <div class="login-row">
-      <label for="senhaInput">🔐 Senha</label>
-      <input type="password" id="senhaInput" placeholder="ex: rh123, ti456, ..." autocomplete="off">
-      <button id="btnLogin">➜ Liberar</button>
+  <div class="form-group">
+    <label for="senhaInput">Senha do setor</label>
+    <input type="password" id="senhaInput" placeholder="Ex: rh123, ti456, fin789..." autocomplete="off">
+  </div>
+
+  <button class="btn-login" id="btnLogin">
+    ➜ Entrar no sistema
+  </button>
+
+  <div id="mensagemLogin" class="mensagem"></div>
+
+  <div class="senhas-rapidas">
+    <p>📋 Senhas de demonstração:</p>
+    <div class="badges">
+      <span class="badge" data-senha="rh123"><span class="setor-label">RH:</span> rh123</span>
+      <span class="badge" data-senha="ti456"><span class="setor-label">TI:</span> ti456</span>
+      <span class="badge" data-senha="fin789"><span class="setor-label">Financeiro:</span> fin789</span>
+      <span class="badge" data-senha="mkt101"><span class="setor-label">Marketing:</span> mkt101</span>
     </div>
-    <div id="mensagemLogin" class="mensagem" style="display: none;"></div>
-  </div>
-
-  <!-- SETORES (grade) -->
-  <div style="display: flex; justify-content: space-between; align-items: baseline;">
-    <h2 style="font-size: 1.2rem; font-weight: 500; color: #1e293b;">📋 Setores disponíveis</h2>
-    <span style="font-size: 0.7rem; background: #eef2f6; padding: 0.2rem 0.8rem; border-radius: 30px; color: #475569;">clique no setor para redirecionar</span>
-  </div>
-
-  <div class="setores-grid" id="setoresContainer">
-    <!-- Cada setor será renderizado via JS, mas já colocamos estrutura estática para fallback -->
-  </div>
-
-  <div class="footer-note">
-    <span>🟢 RH: <strong>rh123</strong></span>
-    <span>🔵 TI: <strong>ti456</strong></span>
-    <span>🟠 Financeiro: <strong>fin789</strong></span>
-    <span>🟣 Marketing: <strong>mkt101</strong></span>
   </div>
 </div>
 
 <script>
   (function() {
-    "use strict";
-
-    // ---------- CONFIGURAÇÃO DOS SETORES ----------
-    // Cada objeto: { id, nome, icone, senha, link, bloqueado (inicial) }
-    const setores = [
-      { 
-        id: 'rh', 
-        nome: 'RH', 
-        icone: '👥', 
-        senha: 'rh123', 
-        link: 'https://exemplo.com/rh', 
-        bloqueado: true 
-      },
-      { 
-        id: 'ti', 
-        nome: 'TI', 
-        icone: '💻', 
-        senha: 'ti456', 
-        link: 'https://exemplo.com/ti', 
-        bloqueado: true 
-      },
-      { 
-        id: 'financeiro', 
-        nome: 'Financeiro', 
-        icone: '💰', 
-        senha: 'fin789', 
-        link: 'https://exemplo.com/financeiro', 
-        bloqueado: true 
-      },
-      { 
-        id: 'marketing', 
-        nome: 'Marketing', 
-        icone: '📣', 
-        senha: 'mkt101', 
-        link: 'https://exemplo.com/marketing', 
-        bloqueado: true 
-      }
-    ];
-
-    // Referências DOM
-    const container = document.getElementById('setoresContainer');
     const senhaInput = document.getElementById('senhaInput');
     const btnLogin = document.getElementById('btnLogin');
     const mensagemEl = document.getElementById('mensagemLogin');
 
-    // Estado atual: setor liberado (armazenamos o id do setor desbloqueado)
-    let setorLiberadoId = null;   // null = nenhum setor liberado
+    // Mapeamento de senhas para setores (igual ao da página principal)
+    const senhaParaSetor = {
+      'rh123': 'RH',
+      'ti456': 'TI',
+      'fin789': 'Financeiro',
+      'mkt101': 'Marketing'
+    };
 
-    // ---------- FUNÇÃO PARA RENDERIZAR OS SETORES ----------
-    function renderizarSetores() {
-      // Limpa o container (mas mantém referência)
-      container.innerHTML = '';
-
-      setores.forEach(setor => {
-        // Verifica se este setor está liberado (comparando id com setorLiberadoId)
-        const estaLiberado = (setorLiberadoId === setor.id);
-        // O setor só fica desbloqueado se o id bater com o liberado
-        // (mas mantemos a propriedade 'bloqueado' para exibição)
-        const isBloqueado = !estaLiberado;
-
-        // Cria o card
-        const card = document.createElement('div');
-        card.className = `setor-card ${isBloqueado ? 'bloqueado' : ''}`;
-        card.dataset.setorId = setor.id;
-
-        // Ícone
-        const iconSpan = document.createElement('div');
-        iconSpan.className = 'icone';
-        iconSpan.textContent = setor.icone;
-
-        // Nome
-        const nomeSpan = document.createElement('div');
-        nomeSpan.className = 'nome-setor';
-        nomeSpan.textContent = setor.nome;
-
-        // Link (exibição)
-        const linkSpan = document.createElement('div');
-        linkSpan.className = 'link-info';
-        linkSpan.textContent = setor.link;
-
-        // Se estiver bloqueado, mostra cadeado
-        if (isBloqueado) {
-          const cadeadoSpan = document.createElement('span');
-          cadeadoSpan.className = 'cadeado';
-          cadeadoSpan.textContent = '🔒';
-          nomeSpan.appendChild(cadeadoSpan);
-        } else {
-          // Se liberado, mostra um indicador
-          const desbloqSpan = document.createElement('span');
-          desbloqSpan.className = 'badge-senha';
-          desbloqSpan.textContent = '✓ liberado';
-          desbloqSpan.style.marginLeft = '6px';
-          nomeSpan.appendChild(desbloqSpan);
-        }
-
-        card.appendChild(iconSpan);
-        card.appendChild(nomeSpan);
-        card.appendChild(linkSpan);
-
-        // EVENTO DE CLIQUE: redireciona se estiver liberado
-        card.addEventListener('click', function(e) {
-          const id = this.dataset.setorId;
-          const setorEncontrado = setores.find(s => s.id === id);
-          if (!setorEncontrado) return;
-
-          // Verifica se o setor está liberado (comparando com estado)
-          const estaLiberado = (setorLiberadoId === setorEncontrado.id);
-          if (!estaLiberado) {
-            // Bloqueado: exibe mensagem de erro no campo de mensagens
-            exibirMensagem(`⛔ Setor "${setorEncontrado.nome}" bloqueado. Insira a senha correta.`, false);
-            // limpa o foco
-            senhaInput.focus();
-            return;
-          }
-
-          // Liberado: redireciona para o link
-          if (setorEncontrado.link) {
-            // Simula redirecionamento (abre em nova aba para demonstrar)
-            // Em produção, use window.location.href = setorEncontrado.link;
-            // Mas para não sair da página, abrimos em nova aba (mais amigável para demo)
-            window.open(setorEncontrado.link, '_blank');
-            // Opcional: mensagem de sucesso
-            exibirMensagem(`✅ Redirecionando para ${setorEncontrado.nome}...`, true);
-          } else {
-            exibirMensagem(`⚠️ Link não configurado para ${setorEncontrado.nome}`, false);
-          }
-        });
-
-        container.appendChild(card);
-      });
-    }
-
-    // ---------- FUNÇÃO PARA EXIBIR MENSAGEM ----------
-    function exibirMensagem(texto, isSucesso = false) {
-      mensagemEl.style.display = 'block';
+    function exibirMensagem(texto, isErro = true) {
       mensagemEl.textContent = texto;
       mensagemEl.className = 'mensagem';
-      if (isSucesso) {
-        mensagemEl.classList.add('sucesso');
+      if (isErro) {
+        mensagemEl.classList.add('erro');
       } else {
-        mensagemEl.classList.remove('sucesso');
+        mensagemEl.classList.add('sucesso');
       }
-      // Auto esconder após 5s
+      // Auto-esconder após 4s
       clearTimeout(window._msgTimeout);
       window._msgTimeout = setTimeout(() => {
-        mensagemEl.style.display = 'none';
-      }, 5000);
+        mensagemEl.className = 'mensagem';
+        mensagemEl.textContent = '';
+      }, 4000);
     }
 
-    // ---------- FUNÇÃO DE LOGIN (tenta liberar setor) ----------
-    function tentarLogin() {
-      const senhaDigitada = senhaInput.value.trim();
-      if (!senhaDigitada) {
-        exibirMensagem('⚠️ Digite uma senha.', false);
+    function realizarLogin() {
+      const senha = senhaInput.value.trim();
+      if (!senha) {
+        exibirMensagem('⚠️ Digite uma senha.', true);
         senhaInput.focus();
         return;
       }
 
-      // Procura setor que tenha essa senha
-      const setorEncontrado = setores.find(s => s.senha === senhaDigitada);
-      if (!setorEncontrado) {
-        // Senha inválida: não libera nenhum setor
-        // Remove qualquer liberação anterior? Vamos manter a liberação atual, mas mostramos erro.
-        exibirMensagem('❌ Senha inválida. Nenhum setor corresponde.', false);
-        // Se quiser desbloquear ao errar? não.
+      // Verifica se a senha existe
+      if (!senhaParaSetor[senha]) {
+        exibirMensagem('❌ Senha inválida. Tente novamente.', true);
         senhaInput.value = '';
         senhaInput.focus();
         return;
       }
 
-      // Senha correta: libera esse setor (e bloqueia os outros)
-      setorLiberadoId = setorEncontrado.id;
-
-      // Renderiza novamente para atualizar os cards
-      renderizarSetores();
-
-      // Mensagem de sucesso
-      exibirMensagem(`✅ Setor "${setorEncontrado.nome}" liberado! Clique no card para redirecionar.`, true);
-
-      // Limpa o campo
-      senhaInput.value = '';
-      // Foco no input para próxima tentativa
-      senhaInput.focus();
-
-      // Opcional: guardar no sessionStorage para persistência durante a sessão
+      // Senha correta: salva no sessionStorage e redireciona
+      const setorNome = senhaParaSetor[senha];
+      
       try {
-        sessionStorage.setItem('setorLiberadoId', setorLiberadoId);
-      } catch (e) {}
-    }
-
-    // ---------- RESTAURAR ESTADO (se houver no sessionStorage) ----------
-    function restaurarEstado() {
-      try {
-        const stored = sessionStorage.getItem('setorLiberadoId');
-        if (stored && setores.some(s => s.id === stored)) {
-          setorLiberadoId = stored;
-        } else {
-          setorLiberadoId = null;
-        }
+        // Salva a senha para ser usada na página principal
+        sessionStorage.setItem('senhaLiberada', senha);
+        sessionStorage.setItem('setorLiberado', setorNome);
+        
+        // Mensagem de sucesso e redireciona
+        exibirMensagem(`✅ Setor "${setorNome}" liberado! Redirecionando...`, false);
+        
+        // Redireciona após um pequeno delay para mostrar a mensagem
+        setTimeout(() => {
+          window.location.href = 'setores.html';
+        }, 800);
       } catch (e) {
-        setorLiberadoId = null;
-      }
-      // Renderiza com o estado restaurado
-      renderizarSetores();
-      // Se houver um setor liberado, mostra mensagem
-      if (setorLiberadoId) {
-        const setor = setores.find(s => s.id === setorLiberadoId);
-        if (setor) {
-          exibirMensagem(`🔓 Setor "${setor.nome}" já está liberado (sessão).`, true);
-        }
+        exibirMensagem('⚠️ Erro ao salvar sessão. Tente novamente.', true);
       }
     }
 
-    // ---------- EVENTOS ----------
+    // Evento de clique no botão
     btnLogin.addEventListener('click', function(e) {
       e.preventDefault();
-      tentarLogin();
+      realizarLogin();
     });
 
-    // Enter no campo de senha também dispara login
+    // Enter no campo de senha
     senhaInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -537,19 +302,27 @@
       }
     });
 
-    // Inicialização: restaura estado e renderiza
-    restaurarEstado();
-
-    // Para demonstração: se quiser resetar o estado com duplo clique no título (escondido)
-    // mas não é necessário
-
-    // Adicional: limpar mensagem ao digitar
-    senhaInput.addEventListener('input', function() {
-      if (mensagemEl.style.display !== 'none' && !mensagemEl.classList.contains('sucesso')) {
-        mensagemEl.style.display = 'none';
-      }
+    // Clique nos badges de senha rápida
+    document.querySelectorAll('.badge').forEach(badge => {
+      badge.addEventListener('click', function() {
+        const senha = this.dataset.senha;
+        senhaInput.value = senha;
+        senhaInput.focus();
+        // Opcional: já logar automaticamente? Prefiro deixar o usuário clicar em Entrar
+        exibirMensagem(`🔑 Senha "${senha}" preenchida. Clique em "Entrar".`, false);
+        setTimeout(() => {
+          mensagemEl.className = 'mensagem';
+          mensagemEl.textContent = '';
+        }, 2500);
+      });
     });
 
+    // Verifica se já está logado e redireciona automaticamente
+    if (sessionStorage.getItem('senhaLiberada')) {
+      const setor = sessionStorage.getItem('setorLiberado') || 'desconhecido';
+      // Se já estiver logado, redireciona diretamente
+      window.location.href = 'setores.html';
+    }
   })();
 </script>
 </body>
